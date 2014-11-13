@@ -2,33 +2,37 @@
 var getdatas = require('../../models/buyer');
 module.exports = function (router) {
     var model = new getdatas();
+
     router.get('/', function (req, res) {      
         res.format({
             json: function () {
                 res.json(model);
             },
             html: function () {
-                res.render('buyer/index', model);
+                res.redirect('/buyer/login');
             }
         });
     });
+
      router.get('/login', function (req, res) {  
         req.getConnection(function(err,connection){       
             connection.query('SELECT * FROM clients',function(err,rowss){
-               var rows= {'friends':rowss}  
+               res.clearCookie();
+               res.cookie('khizar', rowss);
+               var rows= {'friends':rowss,'cookie':res.cookie('khizar')};  
                 if(err) console.log("Error Selecting : %s ",err );     
                 res.format({
-                    json: function () {
+                    json: function (rows) {
                     //res.json(rows);
                 },
                 html: function () {
-                   // console.log(rows);
                     res.render('buyer/index',rows);
                 }
                 });                 
             });       
          });  
     });
+
     router.get('/edit/:id/', function (req, res) {  
         var ids = req.params.id;
         req.getConnection(function(err,connection){       
@@ -45,29 +49,59 @@ module.exports = function (router) {
             });       
          });  
     });
-    router.get('/update/:id/', function (req, res) {  
-        //var ids = req.params.id;
+
+    router.get('/add', function (req, res) { 
+        var title= {'Title':'Add New clients'}  
+        res.render('buyer/addMerchant',title); 
+        console.log(title);
+    });
+
+    router.post('/update', function (req, res) {  
+       var ids = req.body.cli_id;
         var data = {
             cli_code:'Ebay',
             cli_company:req.body.company,
             cli_address:req.body.address,
             cli_phone:req.body.phone
         };
-        //console.log(data);
-         res.render('/buyer/viewMerchant',rows);
-        req.getConnection(function(err,connection){       
-
+        req.getConnection(function(err,connection){      
             connection.query("UPDATE clients set ? WHERE cli_id = ? ",[data,ids],function(err,rowss){
                 if(err) console.log("Error Selecting : %s ",err );     
-                res.format({         
+                 res.format({         
                     json:function(){
-
+                        res.json(data);
                     },         
-                    html: function () {                  
-                        res.redirect('/buyer/index');
+                    html: function () {   
+                        res.redirect('/buyer/login');
+                        //res.send("UPDATED");
                     }
-                });                 
+                });
             });        
          }); 
     });
+
+    router.post('/save', function (req, res) {  
+        var data = {
+            cli_code:req.body.code,
+            cli_company:req.body.company,
+            cli_address:req.body.address,
+            cli_phone:req.body.phone
+        };
+        req.getConnection(function(err,connection){      
+            connection.query("INSERT INTO clients set ? ",data, function(err, rows){
+                if(err) console.log("Error Selecting : %s ",err );     
+                 res.format({         
+                    json:function(){
+                        res.json(data);
+                    },         
+                    html: function () {   
+                        res.redirect('/buyer/login');
+                        //res.send("UPDATED");
+                    }
+                });
+            });        
+         }); 
+    });
+
+
 };

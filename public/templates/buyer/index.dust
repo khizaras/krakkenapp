@@ -15,9 +15,10 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#friends}					
+						{#friends}
+	
 						<tr>
-							<td>#</td><td>{cli_code}</td><td>{cli_company}</td><td>{cli_address}</td><td><a href="/buyer/edit/{cli_id}">Edit</a></td>
+							<td>{@math key=$idx method="add" operand="1"/}</td><td>{cli_code}</td><td>{cli_company}</td><td>{cli_address}</td><td><a href="/buyer/edit/{cli_id}">Edit</a></td>
 						</tr>
 						{/friends}
 					</tbody>

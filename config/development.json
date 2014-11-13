@@ -25,7 +25,11 @@
     },
 
     "middleware": {
-
+		"appsec": {
+		  "csp": false,
+		  "xframe": false,
+		  "p3p": false
+		},
         "devtools": {
             "enabled": true,
             "priority": 35,

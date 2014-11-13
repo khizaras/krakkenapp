@@ -6,8 +6,9 @@ var kraken = require('kraken-js');
 var mysql = require('mysql');
 var myConnection = require('express-myconnection');
 var options, app, server;
-
+var cookieParser = require('cookie-parser');
 /*
+    http://expressjs.com/api.html#res.cookie
  * Create and configure application. Also exports application instance for use by tests.
  * See https://github.com/krakenjs/kraken-js#options for additional configuration options.
  */
@@ -27,7 +28,7 @@ app.on('start', function () {
     console.log('Application ready to serve requests.');
     console.log('Environment: %s', app.kraken.get('env:env'));
 });
-
+app.use(cookieParser());
 app.use(myConnection(mysql, {
     host:'localhost',
     user:'root',
